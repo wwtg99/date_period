@@ -2,6 +2,7 @@ Date Period
 ===========
 
 Generate a series of date period, usually for statistics.
+基于日、周、月、年等的时间段切分。
 
 # Installation
 
@@ -13,6 +14,9 @@ or add
 "wwtg99/date_period": "*"
 ```
 to composer.json
+
+# Test
+Unit test file in tests. Tested in PHP 7.1.
 
 # Usage
 
@@ -62,6 +66,7 @@ Title: 2017-09 From: 2017-09-01 To: 2017-10-01
 ```
 
 ## Use generator instead of array (usually for very long period)
+Generator support PHP 7.0+.
 ```php
 $start = '2017-07-11';
 $end = '2017-09-10';

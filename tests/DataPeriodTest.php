@@ -54,7 +54,7 @@ class DataPeriodTest extends \PHPUnit_Framework_TestCase
         $end = $endDay->toDateString();
         $arr = DatePeriod::getPeriodArray(DatePeriod::TYPE_PERIOD_MONTH, $start, $end);
         self::assertEquals($endDay->diffInMonths($startDay->copy()->startOfMonth()) + 1, count($arr));
-        $st = $startDay->copy();
+        $st = $startDay->copy()->startOfMonth();
         foreach ($arr as $item) {
             self::assertEquals($st->format('Y-m'), $item->getTitle());
             $st->addMonth(1);
@@ -64,7 +64,7 @@ class DataPeriodTest extends \PHPUnit_Framework_TestCase
         $end = $endDay->toDateString();
         $arr = DatePeriod::getPeriodArray(DatePeriod::TYPE_PERIOD_YEAR, $start, $end);
         self::assertEquals($endDay->diffInYears($startDay->copy()->startOfYear()) + 1, count($arr));
-        $st = $startDay->copy();
+        $st = $startDay->copy()->startOfYear();
         foreach ($arr as $item) {
             self::assertEquals($st->format('Y'), $item->getTitle());
             $st->addYear(1);
@@ -112,7 +112,7 @@ class DataPeriodTest extends \PHPUnit_Framework_TestCase
         $endDay = $this->generateRandomDateAfter($start, true);
         $end = $endDay->toDateString();
         $st = $startDay->copy()->startOfYear();
-        foreach (DatePeriod::getPeriodGenerator(DatePeriod::TYPE_PERIOD_MONTH, $start, $end) as $item) {
+        foreach (DatePeriod::getPeriodGenerator(DatePeriod::TYPE_PERIOD_YEAR, $start, $end) as $item) {
             self::assertEquals($st->format('Y'), $item->getTitle());
             $st->addYear(1);
         }

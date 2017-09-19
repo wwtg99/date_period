@@ -112,14 +112,14 @@ class DatePeriod extends CarbonInterval
             $endDay = Carbon::today();
         }
         switch ($periodType) {
-            case DatePeriod::TYPE_PERIOD_SECOND: return static::secondGenerator($startDay, $endDay);
-            case DatePeriod::TYPE_PERIOD_MINUTE: return static::minuteGenerator($startDay, $endDay);
-            case DatePeriod::TYPE_PERIOD_HOUR: return static::hourGenerator($startDay, $endDay);
-            case DatePeriod::TYPE_PERIOD_DAY: return static::dayGenerator($startDay, $endDay);
-            case DatePeriod::TYPE_PERIOD_WEEK: return static::weekGenerator($startDay, $endDay);
-            case DatePeriod::TYPE_PERIOD_MONTH: return static::monthGenerator($startDay, $endDay);
-            case DatePeriod::TYPE_PERIOD_SEASON: return static::seasonGenerator($startDay, $endDay);
-            case DatePeriod::TYPE_PERIOD_YEAR: return static::yearGenerator($startDay, $endDay);
+            case DatePeriod::TYPE_PERIOD_SECOND: yield from static::secondGenerator($startDay, $endDay);break;
+            case DatePeriod::TYPE_PERIOD_MINUTE: yield from static::minuteGenerator($startDay, $endDay);break;
+            case DatePeriod::TYPE_PERIOD_HOUR: yield from static::hourGenerator($startDay, $endDay);break;
+            case DatePeriod::TYPE_PERIOD_DAY: yield from static::dayGenerator($startDay, $endDay);break;
+            case DatePeriod::TYPE_PERIOD_WEEK: yield from static::weekGenerator($startDay, $endDay);break;
+            case DatePeriod::TYPE_PERIOD_MONTH: yield from static::monthGenerator($startDay, $endDay);break;
+            case DatePeriod::TYPE_PERIOD_SEASON: yield from static::seasonGenerator($startDay, $endDay);break;
+            case DatePeriod::TYPE_PERIOD_YEAR: yield from static::yearGenerator($startDay, $endDay);break;
             default: {
                 foreach (static::nonePeriodArray($startDay, $endDay) as $item) {
                     yield $item;
