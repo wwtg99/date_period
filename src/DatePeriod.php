@@ -79,15 +79,15 @@ class DatePeriod extends CarbonInterval
             $endDay = Carbon::today();
         }
         switch ($periodType) {
-            case DatePeriod::TYPE_PERIOD_SECOND: $arr = static::secondArray($startDay, $endDay); break;
-            case DatePeriod::TYPE_PERIOD_MINUTE: $arr = static::minuteArray($startDay, $endDay); break;
-            case DatePeriod::TYPE_PERIOD_HOUR: $arr = static::hourArray($startDay, $endDay); break;
-            case DatePeriod::TYPE_PERIOD_DAY: $arr = static::dayArray($startDay, $endDay); break;
-            case DatePeriod::TYPE_PERIOD_WEEK: $arr = static::weekArray($startDay, $endDay); break;
-            case DatePeriod::TYPE_PERIOD_MONTH: $arr = static::monthArray($startDay, $endDay); break;
-            case DatePeriod::TYPE_PERIOD_SEASON: $arr = static::seasonArray($startDay, $endDay); break;
-            case DatePeriod::TYPE_PERIOD_YEAR: $arr = static::yearArray($startDay, $endDay); break;
-            default: $arr = static::nonePeriodArray($startDay, $endDay);
+            case DatePeriod::TYPE_PERIOD_SECOND: $arr = static::secondArray($startDay, $endDay, $dateType); break;
+            case DatePeriod::TYPE_PERIOD_MINUTE: $arr = static::minuteArray($startDay, $endDay, $dateType); break;
+            case DatePeriod::TYPE_PERIOD_HOUR: $arr = static::hourArray($startDay, $endDay, $dateType); break;
+            case DatePeriod::TYPE_PERIOD_DAY: $arr = static::dayArray($startDay, $endDay, $dateType); break;
+            case DatePeriod::TYPE_PERIOD_WEEK: $arr = static::weekArray($startDay, $endDay, $dateType); break;
+            case DatePeriod::TYPE_PERIOD_MONTH: $arr = static::monthArray($startDay, $endDay, $dateType); break;
+            case DatePeriod::TYPE_PERIOD_SEASON: $arr = static::seasonArray($startDay, $endDay, $dateType); break;
+            case DatePeriod::TYPE_PERIOD_YEAR: $arr = static::yearArray($startDay, $endDay, $dateType); break;
+            default: $arr = static::nonePeriodArray($startDay, $endDay, $dateType);
         }
         return $arr;
     }
@@ -112,16 +112,16 @@ class DatePeriod extends CarbonInterval
             $endDay = Carbon::today();
         }
         switch ($periodType) {
-            case DatePeriod::TYPE_PERIOD_SECOND: yield from static::secondGenerator($startDay, $endDay);break;
-            case DatePeriod::TYPE_PERIOD_MINUTE: yield from static::minuteGenerator($startDay, $endDay);break;
-            case DatePeriod::TYPE_PERIOD_HOUR: yield from static::hourGenerator($startDay, $endDay);break;
-            case DatePeriod::TYPE_PERIOD_DAY: yield from static::dayGenerator($startDay, $endDay);break;
-            case DatePeriod::TYPE_PERIOD_WEEK: yield from static::weekGenerator($startDay, $endDay);break;
-            case DatePeriod::TYPE_PERIOD_MONTH: yield from static::monthGenerator($startDay, $endDay);break;
-            case DatePeriod::TYPE_PERIOD_SEASON: yield from static::seasonGenerator($startDay, $endDay);break;
-            case DatePeriod::TYPE_PERIOD_YEAR: yield from static::yearGenerator($startDay, $endDay);break;
+            case DatePeriod::TYPE_PERIOD_SECOND: yield from static::secondGenerator($startDay, $endDay, $dateType);break;
+            case DatePeriod::TYPE_PERIOD_MINUTE: yield from static::minuteGenerator($startDay, $endDay, $dateType);break;
+            case DatePeriod::TYPE_PERIOD_HOUR: yield from static::hourGenerator($startDay, $endDay, $dateType);break;
+            case DatePeriod::TYPE_PERIOD_DAY: yield from static::dayGenerator($startDay, $endDay, $dateType);break;
+            case DatePeriod::TYPE_PERIOD_WEEK: yield from static::weekGenerator($startDay, $endDay, $dateType);break;
+            case DatePeriod::TYPE_PERIOD_MONTH: yield from static::monthGenerator($startDay, $endDay, $dateType);break;
+            case DatePeriod::TYPE_PERIOD_SEASON: yield from static::seasonGenerator($startDay, $endDay, $dateType);break;
+            case DatePeriod::TYPE_PERIOD_YEAR: yield from static::yearGenerator($startDay, $endDay, $dateType);break;
             default: {
-                foreach (static::nonePeriodArray($startDay, $endDay) as $item) {
+                foreach (static::nonePeriodArray($startDay, $endDay, $dateType) as $item) {
                     yield $item;
                 }
             }
@@ -252,17 +252,17 @@ class DatePeriod extends CarbonInterval
         return $this->getTitle() . " From " . $this->getStartString() . ' to ' . $this->getEndString();
     }
 
-    protected static function secondArray($startDay, $endDay)
+    protected static function secondArray($startDay, $endDay, $dateType = DatePeriod::TYPE_DATE)
     {
         throw new \Exception('Not supported yet');
     }
 
-    protected static function minuteArray($startDay, $endDay)
+    protected static function minuteArray($startDay, $endDay, $dateType = DatePeriod::TYPE_DATE)
     {
         throw new \Exception('Not supported yet');
     }
 
-    protected static function hourArray($startDay, $endDay)
+    protected static function hourArray($startDay, $endDay, $dateType = DatePeriod::TYPE_DATE)
     {
         throw new \Exception('Not supported yet');
     }
@@ -270,13 +270,17 @@ class DatePeriod extends CarbonInterval
     /**
      * @param Carbon $startDay
      * @param Carbon $endDay
+     * @param int $dateType
      * @return array
      */
-    protected static function dayArray($startDay, $endDay)
+    protected static function dayArray($startDay, $endDay, $dateType = DatePeriod::TYPE_DATE)
     {
         $arr = [];
+        $startDay->startOfDay();
         while ($endDay->gte($startDay)) {
             $dp = new DatePeriod(null, null, null, 1, null, null, null);
+            $dp->setPeriodType(DatePeriod::TYPE_PERIOD_DAY);
+            $dp->setDateType($dateType);
             $dp->setStart($startDay->copy());
             $dp->setTitle($startDay->toDateString());
             $dp->setEnd($startDay->addDay()->copy());
@@ -288,14 +292,17 @@ class DatePeriod extends CarbonInterval
     /**
      * @param Carbon $startDay
      * @param Carbon $endDay
+     * @param int $dateType
      * @return array
      */
-    protected static function weekArray($startDay, $endDay)
+    protected static function weekArray($startDay, $endDay, $dateType = DatePeriod::TYPE_DATE)
     {
         $arr = [];
         $startDay->startOfWeek();
         while ($endDay->gte($startDay)) {
             $dp = new DatePeriod(null, null, 1, null, null, null, null);
+            $dp->setPeriodType(DatePeriod::TYPE_PERIOD_WEEK);
+            $dp->setDateType($dateType);
             $dp->setStart($startDay->copy());
             $dp->setTitle($startDay->format('Y-m ') . 'W' . $startDay->weekOfMonth);
             $dp->setEnd($startDay->addWeek()->copy());
@@ -307,14 +314,17 @@ class DatePeriod extends CarbonInterval
     /**
      * @param Carbon $startDay
      * @param Carbon $endDay
+     * @param int $dateType
      * @return array
      */
-    protected static function monthArray($startDay, $endDay)
+    protected static function monthArray($startDay, $endDay, $dateType = DatePeriod::TYPE_DATE)
     {
         $arr = [];
         $startDay->startOfMonth();
         while ($endDay->gte($startDay)) {
             $dp = new DatePeriod(null, 1);
+            $dp->setPeriodType(DatePeriod::TYPE_PERIOD_MONTH);
+            $dp->setDateType($dateType);
             $dp->setStart($startDay->copy());
             $dp->setTitle($startDay->format('Y-m'));
             $dp->setEnd($startDay->addMonth()->copy());
@@ -323,7 +333,7 @@ class DatePeriod extends CarbonInterval
         return $arr;
     }
 
-    protected static function seasonArray($startDay, $endDay)
+    protected static function seasonArray($startDay, $endDay, $dateType = DatePeriod::TYPE_DATE)
     {
         throw new \Exception('Not supported yet');
     }
@@ -331,14 +341,17 @@ class DatePeriod extends CarbonInterval
     /**
      * @param Carbon $startDay
      * @param Carbon $endDay
+     * @param int $dateType
      * @return array
      */
-    protected static function yearArray($startDay, $endDay)
+    protected static function yearArray($startDay, $endDay, $dateType = DatePeriod::TYPE_DATE)
     {
         $arr = [];
         $startDay->startOfYear();
         while ($endDay->gte($startDay)) {
             $dp = new DatePeriod(1);
+            $dp->setPeriodType(DatePeriod::TYPE_PERIOD_YEAR);
+            $dp->setDateType($dateType);
             $dp->setStart($startDay->copy());
             $dp->setTitle($startDay->format('Y'));
             $dp->setEnd($startDay->addYear()->copy());
@@ -347,17 +360,17 @@ class DatePeriod extends CarbonInterval
         return $arr;
     }
 
-    protected static function secondGenerator($startDay, $endDay)
+    protected static function secondGenerator($startDay, $endDay, $dateType = DatePeriod::TYPE_DATE)
     {
         throw new \Exception('Not supported yet');
     }
 
-    protected static function minuteGenerator($startDay, $endDay)
+    protected static function minuteGenerator($startDay, $endDay, $dateType = DatePeriod::TYPE_DATE)
     {
         throw new \Exception('Not supported yet');
     }
 
-    protected static function hourGenerator($startDay, $endDay)
+    protected static function hourGenerator($startDay, $endDay, $dateType = DatePeriod::TYPE_DATE)
     {
         throw new \Exception('Not supported yet');
     }
@@ -365,12 +378,16 @@ class DatePeriod extends CarbonInterval
     /**
      * @param Carbon $startDay
      * @param Carbon $endDay
+     * @param int $dateType
      * @return \Generator
      */
-    protected static function dayGenerator($startDay, $endDay)
+    protected static function dayGenerator($startDay, $endDay, $dateType = DatePeriod::TYPE_DATE)
     {
+        $startDay->startOfDay();
         while ($endDay->gte($startDay)) {
             $dp = new DatePeriod(null, null, null, 1, null, null, null);
+            $dp->setPeriodType(DatePeriod::TYPE_PERIOD_DAY);
+            $dp->setDateType($dateType);
             $dp->setStart($startDay->copy());
             $dp->setTitle($startDay->toDateString());
             $dp->setEnd($startDay->addDay()->copy());
@@ -381,13 +398,16 @@ class DatePeriod extends CarbonInterval
     /**
      * @param Carbon $startDay
      * @param Carbon $endDay
+     * @param int $dateType
      * @return \Generator
      */
-    protected static function weekGenerator($startDay, $endDay)
+    protected static function weekGenerator($startDay, $endDay, $dateType = DatePeriod::TYPE_DATE)
     {
         $startDay->startOfWeek();
         while ($endDay->gte($startDay)) {
             $dp = new DatePeriod(null, null, 1);
+            $dp->setPeriodType(DatePeriod::TYPE_PERIOD_WEEK);
+            $dp->setDateType($dateType);
             $dp->setStart($startDay->copy());
             $dp->setTitle($startDay->format('Y-m ') . 'W' . $startDay->weekOfMonth);
             $dp->setEnd($startDay->addWeek()->copy());
@@ -398,13 +418,16 @@ class DatePeriod extends CarbonInterval
     /**
      * @param Carbon $startDay
      * @param Carbon $endDay
+     * @param int $dateType
      * @return \Generator
      */
-    protected static function monthGenerator($startDay, $endDay)
+    protected static function monthGenerator($startDay, $endDay, $dateType = DatePeriod::TYPE_DATE)
     {
         $startDay->startOfMonth();
         while ($endDay->gte($startDay)) {
             $dp = new DatePeriod(null, 1);
+            $dp->setPeriodType(DatePeriod::TYPE_PERIOD_MONTH);
+            $dp->setDateType($dateType);
             $dp->setStart($startDay->copy());
             $dp->setTitle($startDay->format('Y-m'));
             $dp->setEnd($startDay->addMonth()->copy());
@@ -412,7 +435,7 @@ class DatePeriod extends CarbonInterval
         }
     }
 
-    protected static function seasonGenerator($startDay, $endDay)
+    protected static function seasonGenerator($startDay, $endDay, $dateType = DatePeriod::TYPE_DATE)
     {
         throw new \Exception('Not supported yet');
     }
@@ -420,13 +443,16 @@ class DatePeriod extends CarbonInterval
     /**
      * @param Carbon $startDay
      * @param Carbon $endDay
+     * @param int $dateType
      * @return \Generator
      */
-    protected static function yearGenerator($startDay, $endDay)
+    protected static function yearGenerator($startDay, $endDay, $dateType = DatePeriod::TYPE_DATE)
     {
         $startDay->startOfYear();
         while ($endDay->gte($startDay)) {
             $dp = new DatePeriod(1);
+            $dp->setPeriodType(DatePeriod::TYPE_PERIOD_YEAR);
+            $dp->setDateType($dateType);
             $dp->setStart($startDay->copy());
             $dp->setTitle($startDay->format('Y'));
             $dp->setEnd($startDay->addYear()->copy());
@@ -437,18 +463,24 @@ class DatePeriod extends CarbonInterval
     /**
      * @param Carbon $startDay
      * @param Carbon $endDay
+     * @param int $dateType
      * @return array
      */
-    protected static function nonePeriodArray($startDay, $endDay)
+    protected static function nonePeriodArray($startDay, $endDay, $dateType = DatePeriod::TYPE_DATE)
     {
         $dp = $endDay->diff($startDay);
         if (!$dp) {
             return [];
         }
         $dp = new DatePeriod($dp->y, $dp->m, null, $dp->d, $dp->h, $dp->i, $dp->s);
+        $dp->setPeriodType(DatePeriod::TYPE_PERIOD_NONE);
+        $dp->setDateType($dateType);
         $dp->setStart($startDay);
         $dp->setEnd($endDay);
-        $dp->setTitle($startDay->toDateString() . ' ~ ' . $endDay->toDateString());
+        $dp->setTitle(implode(' ~ ', [
+            $dateType == DatePeriod::TYPE_DATE ? $startDay->toDateString() : $startDay->toDateTimeString(),
+            $dateType == DatePeriod::TYPE_DATE ? $endDay->toDateString() : $endDay->toDateTimeString()
+        ]));
         return [$dp];
     }
 

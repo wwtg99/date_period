@@ -20,7 +20,19 @@ Unit test file in tests. Tested in PHP 7.1.
 
 # Usage
 
-## Generate day array between start day(included) and end day(excluded)
+## Methods
+- DatePeriod::getPeriodArray($datePeriod, $start, $end, $dateFormat)
+- DatePeriod::getPeriodGenerator($datePeriod, $start, $end, $dateFormat)
+
+### Params
+- $datePeriod: period to separate, day, week, month, year ...
+- $start: start time string
+- $end: end time string
+- $dateFormat: date format(default) or datetime format
+
+## Examples
+
+### Generate day array between start day(included) and end day(excluded)
 ```php
 $start = '2017-09-01';
 $end = '2017-09-10';
@@ -45,7 +57,7 @@ Title: 2017-09-09 From: 2017-09-09 To: 2017-09-10
 Title: 2017-09-10 From: 2017-09-10 To: 2017-09-11
 ```
 
-## Generate month array between start day(included) and end day(excluded)
+### Generate month array between start day(included) and end day(excluded)
 ```php
 $start = '2017-05-11';
 $end = '2017-09-10';
@@ -65,12 +77,12 @@ Title: 2017-08 From: 2017-08-01 To: 2017-09-01
 Title: 2017-09 From: 2017-09-01 To: 2017-10-01
 ```
 
-## Use generator instead of array (usually for very long period)
+### Use generator instead of array (usually for very long period)
 Generator support PHP 7.0+.
 ```php
 $start = '2017-07-11';
 $end = '2017-09-10';
-foreach (DatePeriod::getPeriodArray(DatePeriod::TYPE_PERIOD_WEEK, $start, $end) as $item) {
+foreach (DatePeriod::getPeriodGenerator(DatePeriod::TYPE_PERIOD_WEEK, $start, $end) as $item) {
     echo "Title: ", $item->getTitle(), " From: ", $item->getStartString(), " To: ", $item->getEndString(), "\n";
 }
 ```
