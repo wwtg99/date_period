@@ -1,3 +1,6 @@
+# 0.1.3
+- Add second, minute, hour, season period type
+
 # 0.1.2
 - Support datetime format
 

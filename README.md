@@ -101,8 +101,12 @@ Title: 2017-09 W1 From: 2017-09-04 To: 2017-09-11
 ```
 
 ## Supported period
+- Second: every second from start to end
+- Minute: every minute from start to end
+- Hour: every hour from start to end
 - Day: every day from start to end
 - Week: every week from start to end
 - Month: every month from start to end
+- Season: every season from start to end
 - Year: every year from start to end
 - None: same as DateInterval
